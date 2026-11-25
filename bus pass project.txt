@@ -1,0 +1,210 @@
+/* Student Bus Pass System - Stage 1 (Phase 1) */
+
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX 50
+
+int main(void)
+{
+    /* Declare variables */
+    char name[MAX][30];
+    char route[MAX][30];
+    int validTill[MAX];
+
+    int count = 0;
+    int choice;
+    int sno;
+    int i, j;
+    int len;
+    int letters;
+    int ch;
+    int ok;
+
+    do
+    {
+        /* Display the menu */
+        printf("\n=== STUDENT BUS PASS SYSTEM ===\n");
+        printf("1. Issue pass\n");
+        printf("2. View all passes\n");
+        printf("3. Search pass by S.No.\n");
+        printf("4. Exit\n");
+        printf("Enter your choice: ");
+
+        /* Read the choice */
+        if (scanf("%d", &choice) != 1)
+        {
+            choice = 0;
+        }
+
+        while ((ch = getchar()) != '\n' && ch != EOF)
+            ;
+
+        switch (choice)
+        {
+            case 1:
+                /* Functionality 1: Issue pass */
+
+                if (count >= MAX)
+                {
+                    printf("Array is full. Cannot issue more passes.\n");
+                    break;
+                }
+
+                /* Student name validation */
+                do
+                {
+                    printf("Enter student name: ");
+                    fgets(name[count], 30, stdin);
+
+                    len = strlen(name[count]);
+
+                    if (len > 0 && name[count][len - 1] == '\n')
+                        name[count][--len] = '\0';
+                    else
+                        while ((ch = getchar()) != '\n' && ch != EOF)
+                            ;
+
+                    ok = 1;
+                    letters = 0;
+
+                    for (j = 0; j < len; j++)
+                    {
+                        if (isalpha((unsigned char)name[count][j]))
+                            letters++;
+                        else if (name[count][j] != ' ' && name[count][j] != '.')
+                            ok = 0;
+                    }
+
+                    if (letters == 0)
+                        ok = 0;
+
+                    if (!ok)
+                        printf("Invalid name. Use letters, spaces and dots only.\n");
+
+                } while (!ok);
+
+                /* Route validation */
+                do
+                {
+                    printf("Enter route: ");
+                    fgets(route[count], 30, stdin);
+
+                    len = strlen(route[count]);
+
+                    if (len > 0 && route[count][len - 1] == '\n')
+                        route[count][--len] = '\0';
+                    else
+                        while ((ch = getchar()) != '\n' && ch != EOF)
+                            ;
+
+                    ok = 0;
+
+                    for (j = 0; j < len; j++)
+                    {
+                        if (!isspace((unsigned char)route[count][j]))
+                            ok = 1;
+                    }
+
+                    if (!ok)
+                        printf("Route cannot be blank.\n");
+
+                } while (!ok);
+
+                /* Valid-till month validation */
+                do
+                {
+                    ok = 0;
+
+                    printf("Enter valid-till month (1-12): ");
+
+                    if (scanf("%d", &validTill[count]) != 1)
+                        printf("Invalid input. Please enter a number.\n");
+
+                    else if (validTill[count] < 1 || validTill[count] > 12)
+                        printf("Month must be between 1 and 12.\n");
+
+                    else
+                        ok = 1;
+
+                    while ((ch = getchar()) != '\n' && ch != EOF)
+                        ;
+
+                } while (!ok);
+
+                count++;
+
+                printf("Pass issued. S.No. = %d\n", count);
+                break;
+
+            case 2:
+                /* Functionality 2: View all passes */
+
+                if (count == 0)
+                {
+                    printf("No passes issued yet.\n");
+                    break;
+                }
+
+                printf("\n%-6s %-29s %-29s %-10s\n",
+                       "S.No.", "Student Name", "Route", "Valid Till");
+
+                printf("----------------------------------------"
+                       "---------------------------------------\n");
+
+                for (i = 0; i < count; i++)
+                {
+                    printf("%-6d %-29s %-29s %-10d\n",
+                           i + 1, name[i], route[i], validTill[i]);
+                }
+
+                break;
+
+            case 3:
+                /* Functionality 3: Search pass by S.No. */
+
+                printf("Enter S.No. to search: ");
+
+                ok = (scanf("%d", &sno) == 1);
+
+                while ((ch = getchar()) != '\n' && ch != EOF)
+                    ;
+
+                if (!ok)
+                {
+                    printf("Invalid input. Please enter a number.\n");
+                }
+
+                else if (sno < 1 || sno > count)
+                {
+                    printf("S.No. %d does not exist.\n", sno);
+                }
+
+                else
+                {
+                    printf("\n%-6s %-29s %-29s %-10s\n",
+                           "S.No.", "Student Name", "Route", "Valid Till");
+
+                    printf("----------------------------------------"
+                           "---------------------------------------\n");
+
+                    printf("%-6d %-29s %-29s %-10d\n",
+                           sno, name[sno - 1], route[sno - 1],
+                           validTill[sno - 1]);
+                }
+
+                break;
+
+            case 4:
+                printf("Thank you. Exiting...\n");
+                break;
+
+            default:
+                printf("Invalid choice. Please enter 1-4.\n");
+        }
+
+    } while (choice != 4);
+
+    return 0;
+}
